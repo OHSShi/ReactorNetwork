@@ -1,0 +1,5 @@
+CC=g++
+LDFLAGS=-lpthread
+CFLAGS=-g -m64 -DLINUX -D_REENTRANT
+
+include Makefile.common

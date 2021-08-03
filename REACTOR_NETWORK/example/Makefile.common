@@ -1,0 +1,79 @@
+################################################
+# OBJECT SETTING SECTION
+################################################
+OBJS=NetworkHandler.o TestNetworkHandler.o 
+CONNECTOR_OBJS=TestSender.o
+LIB=
+INC=
+LINK_LIB=-L. -lReactorNetwork
+		
+
+TARGET=TestNetworkHandler
+TEST_MODULE=TestSender
+
+
+#################################################
+# COMMON COMPILE RULES SECTION
+#################################################
+.SUFFIXES: .cpp .c .o .a
+.c:
+		$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+.cpp:
+		$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+.cpp.o:
+		$(CC) -c $(CFLAGS) $(INC) $< -o $@
+.cpp.a:
+		$(CC) -c $(CFLAGS) $(CFLAGS_LIB) $(INC) $< 
+			$(AR) $(ARFLAGS) $@ $*.o
+.c~:
+		$(GET) $(GFLAGS) -p $< > $*.c
+			$(CC) $(CFLAGS) $(LDFLAGS) $*.c -o $@
+				-rm -f $*.c
+.s~.s:
+		$(GET) $(GFLAGS) $<
+.h~.h:
+		$(GET) $(GFLAGS) $<
+.c~.c:
+		$(GET) $(GFLAGS) $<
+
+
+#################################################
+# TARGET SETTING SECTION
+#################################################
+all: $(TARGET) $(TEST_MODULE) submod  
+#all: $(OBJS) $(TEST_MODULE) 
+
+$(TARGET):$(OBJS)
+		$(CC) $(CFLAGS) $(OBJS) $(INC) $(LINK_LIB) -o $@ $(LDFLAGS) 
+
+#TestClient:
+#		$(CC) $(CFLAGS) $(LDFLAGS) TestClient.cpp $(INC) $(LINK_LIB) -o $@
+
+#NetworkHandler: $(OBJS)
+#	$(CC) $(CFLAGS) $(LDFLAGS) $@.o $(INC) $(LINK_LIB) -o $@
+
+TestSender: $(CONNECTOR_OBJS)
+		$(CC) $(CFLAGS) $(LDFLAGS) TestSender.o $(INC) $(LINK_LIB) -o $@
+
+#################################################
+# SUBMODULE BUILD SETTING SECTION
+#################################################
+submod:
+
+clean:
+	@rm -f *.o core* $(OBJS) $(LIB) $(TARGET) $(TEST_MODULE)
+	@cd $(LIBDIR); rm -f $(LIB)
+	@cd $(TESTDIR); rm -f $(OBJS)
+#	@cd $(INCDIR); rm -f $(HEADER)
+#
+
+test:
+	echo test
+
+#################################################
+# SUBMODULE CLEAN SETTING SECTION
+#################################################
+install:
+		cp $(TARGET) ../bin
+
+

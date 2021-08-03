@@ -1,0 +1,5 @@
+CC=g++
+LDFLAGS=-lpthread -lsocket -lnsl
+CFLAGS=
+
+include Makefile.common

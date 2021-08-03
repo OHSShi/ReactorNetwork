@@ -1,0 +1,97 @@
+################################################
+# OBJECT SETTING SECTION
+################################################
+OBJS=Socket.o SocketEvent.o Stream.o Connector.o Acceptor.o Client.o \
+	 UDPStream.o UDPConnector.o \
+	 UDPClient.o UDPAcceptor.o Multiplexer.o \
+	 Mutex.o 
+LIB=libReactorNetwork.a
+INC=./example
+LINK_LIB=-L. -lReactorNetwork
+		
+
+TEST_MODULE=
+
+
+#################################################
+# COMMON COMPILE RULES SECTION
+#################################################
+.SUFFIXES: .cpp .c .o .a
+.c:
+		$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+.cpp:
+		$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+.cpp.o:
+		$(CC) -c $(CFLAGS) $(INC) $< -o $@
+.cpp.a:
+		$(CC) -c $(CFLAGS) $(CFLAGS_LIB) $(INC) $< 
+			$(AR) $(ARFLAGS) $@ $*.o
+.c~:
+		$(GET) $(GFLAGS) -p $< > $*.c
+			$(CC) $(CFLAGS) $(LDFLAGS) $*.c -o $@
+				-rm -f $*.c
+.s~.s:
+		$(GET) $(GFLAGS) $<
+.h~.h:
+		$(GET) $(GFLAGS) $<
+.c~.c:
+		$(GET) $(GFLAGS) $<
+
+
+#################################################
+# TARGET SETTING SECTION
+#################################################
+#all: $(TARGET) submod  
+all: $(LIB) $(OBJS) $(TEST_MODULE) 
+	cp $(LIB) ./example
+
+$(TARGET):$(OBJS)
+		$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(INC) $(LINK_LIB) -o $@ 
+
+$(LIB) : $(LIB)(Socket.o) \
+	$(LIB)(SocketEvent.o) \
+	$(LIB)(Stream.o) \
+	$(LIB)(Connector.o) \
+	$(LIB)(Acceptor.o) \
+	$(LIB)(Client.o) \
+	$(LIB)(UDPStream.o) \
+	$(LIB)(UDPConnector.o) \
+	$(LIB)(UDPClient.o) \
+	$(LIB)(UDPAcceptor.o) \
+	$(LIB)(Multiplexer.o) \
+	$(LIB)(Mutex.o) \
+
+
+#TestClient:
+#		$(CC) $(CFLAGS) $(LDFLAGS) TestClient.cpp $(INC) $(LINK_LIB) -o $@
+
+#NetworkHandler: $(OBJS)
+#	$(CC) $(CFLAGS) $(LDFLAGS) $@.o $(INC) $(LINK_LIB) -o $@
+
+makelib:
+	ar rc $(LIB_TARGET) $(LIB_OBJS)
+	#cp *.hpp ../../include 
+	#cp $(LIB_TARGET) ../../lib
+
+#################################################
+# SUBMODULE BUILD SETTING SECTION
+#################################################
+submod:
+
+clean:
+	@rm -f *.o core* $(OBJS) $(LIB) $(TARGET) $(TEST_MODULE)
+	@cd $(LIBDIR); rm -f $(LIB)
+	@cd $(TESTDIR); rm -f $(OBJS)
+#	@cd $(INCDIR); rm -f $(HEADER)
+#
+
+test:
+	echo test
+
+#################################################
+# SUBMODULE CLEAN SETTING SECTION
+#################################################
+install:
+		cp $(TARGET) ../bin
+
+
