@@ -43,7 +43,7 @@ int		NetworkHandler::ClientAccepted( SocketEvent* rpEvent )
 	int	ret;
 	int	rSd	= rpEvent->GetNewSd();
 
-	printf( "Client Accepted. IP[%s]" , rpEvent->GetSocket()->GetPeerName().c_str() );
+	printf( "Client Accepted. IP[%s]\n" , rpEvent->GetSocket()->GetPeerName().c_str() );
 
 	Client*	rpClient	= new Client;
 	rpClient->SetSd( rSd );
@@ -69,7 +69,7 @@ int		NetworkHandler::ClientAccepted( SocketEvent* rpEvent )
 
 int		NetworkHandler::DataReceived( SocketEvent* rpEvent )
 {
-	printf( "Size(%d)\n" , rpEvent->GetRecvBytes() );
+	printf( "Size(%d) " , rpEvent->GetRecvBytes() );
 
 	string	rRecvData;
 	rRecvData.insert( 0 , rpEvent->GetRecvData() , rpEvent->GetRecvBytes() );
@@ -85,7 +85,7 @@ int		NetworkHandler::DataReceived( SocketEvent* rpEvent )
 int		NetworkHandler::Disconnected( SocketEvent* rpEvent )
 {
 	Client*	rpClient	= ( Client* )rpEvent->GetSocket();
-	printf( "Client Disconnected... fd(%d)\n" , rpClient->GetSd() );
+	printf( "Client Disconnected... fd(%d) IP[%s]\n" , rpClient->GetSd(), rpEvent->GetSocket()->GetPeerName().c_str() );
 	
 	mpMultiplexer->RemoveSocket( rpClient );
 	rpClient->Close();

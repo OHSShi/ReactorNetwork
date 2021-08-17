@@ -16,6 +16,10 @@ using namespace std;
 
 namespace OSS { namespace NETWORK {
 
+const int       MSG_ANALYZE_SUCCESS     = 0;
+const int       MSG_ANALYZE_FAIL        = -1;
+const int       MSG_ANALYZE_NOT_CLOSE   = 1;
+const int       MSG_ANALYZE_SPARE       = 2;
 
 class	Socket
 {

@@ -21,6 +21,7 @@ class Connector : public Stream
 		~Connector();
 
 		int             Open();
+		int             Open( int rTimeOutSec );
 
 		int             SetAddress(string rAdress);
 		string          GetAddress();

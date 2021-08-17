@@ -85,7 +85,7 @@ int		ExtendConnector< T >::Transaction( char* rpData , int rSize , char* rpRecvB
         }
 
         ret = read( mSd , rpRecvBuff , rRecvBuffSize );
-        if( read > 0 )
+        if( ret > 0 )
         {
             rTotalLen += ret;
         }

@@ -23,5 +23,26 @@ int main(int argc , char** argv)
 		exit(-1);
 	}
 	testConnector.Send(argv[1]);
+
+
+	int sd = testConnector.GetSd();
+	char rRecvBuff[1024];
+	memset( rRecvBuff , 0x00 , sizeof( rRecvBuff ) );
+
+	ret = read( sd , rRecvBuff , sizeof(rRecvBuff) );
+	if( ret > 0 )
+	{
+		string  rReceivedData;
+		rReceivedData.insert( 0 , rRecvBuff , ret );
+		cout << "read: " << rReceivedData << endl;
+	}
+	else
+	{
+		cout << "read Fail!!" << endl;
+		return  -1;
+	}
+
+
+
 	testConnector.Close();
 }
