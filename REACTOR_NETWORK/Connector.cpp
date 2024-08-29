@@ -29,6 +29,7 @@ int		Connector::Open()
 	mSd	= socket( AF_INET , SOCK_STREAM , 0 );
 	if( mSd < 0 )
 	{
+		Socket::SetErrNo( errno );
 		Socket::SetErrorString( "socket() fail" );
 		return -1;
 	}
@@ -48,6 +49,7 @@ int		Connector::Open()
 	ret	= connect( mSd , ( struct sockaddr* )&rAddr , rCliLen );
 	if( ret < 0 )
 	{
+		Socket::SetErrNo( errno );
 		Socket::SetErrorString( "connect() fail" );
 		return -1;
 	}
