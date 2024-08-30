@@ -45,25 +45,31 @@ int		NetworkHandler::ClientAccepted( SocketEvent* rpEvent )
 
 	printf( "Client Accepted. IP[%s]\n" , rpEvent->GetSocket()->GetPeerName().c_str() );
 
-	Client*	rpClient	= new Client;
-	rpClient->SetSd( rSd );
+    if (rpEvent->GetSocket() == &mAcceptor)
+    {
+	    printf( "TCP Accepted\n");
+        Client*	rpClient	= new Client;
+        rpClient->SetSd( rSd );
 
-	ret = rpClient->TransNonBlock();
-	if( ret < 0 )
-	{
-		printf( "ERR: Client Translating Non-Block Fail!! fd(%d)" , rpClient->GetSd() );
-		rpClient->Close();
-		delete rpClient;
-		return  -1;
-	}
+        ret = rpClient->TransNonBlock();
+        if( ret < 0 )
+        {
+            printf( "ERR: Client Translating Non-Block Fail!! fd(%d)" , rpClient->GetSd() );
+            rpClient->Close();
+            delete rpClient;
+            return  -1;
+        }
 
-	rpClient->SetPeerName( rpEvent->GetSocket()->GetPeerName() );
-	rpClient->SetEvent( mpSharedEvent );
-	rpClient->SetEventHandler( this );
-	rpClient->SetBuffer( mpSharedBuffer , mSharedBufferSize );
+        rpClient->SetPeerName( rpEvent->GetSocket()->GetPeerName() );
+        rpClient->SetEvent( mpSharedEvent );
+        rpClient->SetEventHandler( this );
+        rpClient->SetBuffer( mpSharedBuffer , mSharedBufferSize );
 
-	mpMultiplexer->AddSocket( rpClient );
-
+        mpMultiplexer->AddSocket( rpClient );
+    }
+    else {
+        printf("unknown socket\n");
+    }
 	return	0;
 }
 
@@ -76,8 +82,15 @@ int		NetworkHandler::DataReceived( SocketEvent* rpEvent )
 
 	printf( "(%s)\n" , rRecvData.c_str() );
 
-	Client*	rpClient	= ( Client* )rpEvent->GetSocket();
-	rpClient->Send( "APPLE" );
+    if (rpEvent->GetSocket() == &mAcceptor)
+    {
+        Client*	rpClient	= ( Client* )rpEvent->GetSocket();
+        rpClient->Send( "APPLE" );
+    }
+    else if( rpEvent->GetSocket() == &mUdpAcceptor )
+    {
+        mUdpAcceptor.Send("APPLE");
+    }
 
 	return	0;
 }
@@ -171,6 +184,26 @@ int		NetworkHandler::Init()
 	}
 
 	mpMultiplexer->AddSocket( &mAcceptor );
+
+	mUdpAcceptor.SetEventHandler( this );
+	mUdpAcceptor.SetEvent( mpSharedEvent );
+	mUdpAcceptor.SetPortNum( 7777 );
+    mUdpAcceptor.SetBuffer( mpSharedBuffer , mSharedBufferSize );
+	ret = mUdpAcceptor.Open();
+	if( ret < 0 )
+	{
+		printf( "ERR: UDPAcceptor Can't Open. Err Str(%s)" , mUdpAcceptor.GetErrorString().c_str() );
+		return  -1;
+	}
+	ret = mUdpAcceptor.TransNonBlock();
+	if( ret < 0 )
+	{
+		mUdpAcceptor.Close();
+		printf( "ERR: Acceptor.TransNonBlock() Fail" );
+		return  -1;
+	}
+
+	mpMultiplexer->AddSocket( &mUdpAcceptor );
 
 	return	0;
 }

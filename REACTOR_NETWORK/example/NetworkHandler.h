@@ -7,6 +7,8 @@
 #include	"../SocketEventHandler.hpp"
 #include	"../Client.hpp"
 #include	"../Acceptor.hpp"
+#include	"../UDPAcceptor.hpp"
+#include	"../UDPClient.hpp"
 
 using namespace std;
 using namespace OSS::NETWORK;
@@ -22,6 +24,7 @@ class NetworkHandler : public SocketEventHandler , public TimeoutEventHandler
 
 		int				mPortNum;
 		Acceptor		mAcceptor;
+        UDPAcceptor     mUdpAcceptor;
 
 		pthread_t		mThreadId;
 
